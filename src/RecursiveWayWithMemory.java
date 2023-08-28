@@ -1,0 +1,76 @@
+import java.time.Duration;
+import java.time.Instant;
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class RecursiveWayWithMemory {
+    private static boolean isThereSubsetSum(
+        List<Integer> arr, int arraySize, Integer sum, List<Integer> combination, List<List<Integer>> matchingCombinations,
+        Map<String, Boolean> stateCalcLookup) {
+
+        // Recursive methods with memory:
+        // see https://favtutor.com/blogs/subset-sum-problem
+        // https://www.geeksforgeeks.org/subset-sum-problem-dp-25/
+
+        if (sum.equals(0)) {
+            // subset match found
+            matchingCombinations.add(combination);
+            return true;
+        }
+        if (arraySize == 0) {
+            return false;
+        }
+
+        // construct a unique map key from dynamic elements of the input
+
+        Collections.sort(combination);
+
+        String key = sum + "|" + arraySize + combination.stream()
+            .map(String::valueOf)
+            .collect(Collectors.joining("_"));
+
+        // if the subproblem is seen for the first time, solve it and
+        // store its result in a map
+        if (stateCalcLookup.containsKey(key))
+        {
+            //System.out.println("using caching");
+            return stateCalcLookup.get(key);
+        }
+
+        boolean result;
+        // Calculate state and cached it
+        if (arr.get(arraySize - 1) > sum) {
+            // if element is greater than sum, skip it
+            result = isThereSubsetSum(arr, arraySize - 1, sum, combination, matchingCombinations, stateCalcLookup);
+        } else {
+            // Try with array element included in subset
+            List<Integer> copyWithElement = new ArrayList<>();
+            copyWithElement.addAll(combination);
+            copyWithElement.add(arr.get(arraySize - 1));
+            var withElementIncluded = isThereSubsetSum(arr, arraySize - 1, sum - arr.get(arraySize - 1), copyWithElement, matchingCombinations, stateCalcLookup);
+
+            // Try with array element not included in subset
+            List<Integer> copyWithoutElement = new ArrayList<>();
+            copyWithoutElement.addAll(combination);
+            var withoutElement = isThereSubsetSum(arr, arraySize - 1, sum, copyWithoutElement, matchingCombinations, stateCalcLookup);
+
+            result = withElementIncluded|| withoutElement;
+        }
+        stateCalcLookup.put(key, result);
+        return result;
+    }
+
+    static void findSubsets(List<Integer> transactionList, Integer sum) {
+        var start = Instant.now();
+        var combination = new ArrayList<Integer>();
+        var matchingCombinations = new ArrayList<List<Integer>>();
+        // create a map to store solutions to subproblems
+        Map<String, Boolean> stateCalcLookup = new HashMap<>();
+        isThereSubsetSum(transactionList, transactionList.size(), sum, combination, matchingCombinations, stateCalcLookup);
+        System.out.println("Recursive Way With Memory\n Matching suggestions found: " + matchingCombinations.size() + "\n Duration (sec): " + Duration.between(start, Instant.now()).toSeconds());
+        if (matchingCombinations.size() <5) {
+            System.out.println(matchingCombinations.toString());
+        }
+    }
+
+}

@@ -79,10 +79,11 @@ public class DynamicWay {
         }
     }
 
-    private static List<List<Integer>> findSubsets(boolean[][] calculationMatrix, List<Integer> transactionList, Integer sum) {
+    private static int findSubsets(boolean[][] calculationMatrix, List<Integer> transactionList, Integer sum) {
 
         List<PathToSumModel> pathToSumsModelListToSolve = new ArrayList<>();
         List<PathToSumModel> pathToFinalSumModelListSolved = new ArrayList<>();
+        var countMatch = 0;
 
         // initialise list of paths to solve with total sum as target
         pathToSumsModelListToSolve.add(new PathToSumModel(transactionList.size(), sum, new ArrayList<Integer>()));
@@ -95,7 +96,11 @@ public class DynamicWay {
 
             if (pathToSumModel.array_index == 0 || pathToSumModel.targetSum == 0) {
                 // path has been resolved
-                pathToFinalSumModelListSolved.add(pathToSumModel);
+                countMatch +=1;
+                if (countMatch<5) {
+                    // to avoid going out of memory only keeping the first 5 solutions for now
+                    pathToFinalSumModelListSolved.add(pathToSumModel);
+                }
             } else {
                 boolean exclude_element = calculationMatrix[pathToSumModel.array_index - 1][pathToSumModel.targetSum];
                 var value = transactionList.get(pathToSumModel.array_index - 1);
@@ -118,8 +123,8 @@ public class DynamicWay {
                 }
             }
         }
-
-        return pathToFinalSumModelListSolved.stream().map(path -> path.elementsForSum).toList();
+        //return pathToFinalSumModelListSolved.stream().map(path -> path.elementsForSum).toList();
+        return countMatch;
     }
 
     private static boolean getMatchFound(boolean[][] calculationMatrix) {
@@ -128,14 +133,10 @@ public class DynamicWay {
         return calculationMatrix[dimension1-1][dimension2-1];
     }
 
-    static List<List<Integer>> findSubsets(List<Integer> transactionList, Integer sum) {
-        var start = Instant.now();
+    static int findSubsets(List<Integer> transactionList, Integer sum) {
         var calculationMatrix = subsetSum(transactionList, sum);
-        var matchingCombinations = findSubsets(calculationMatrix, transactionList, sum);
-        return matchingCombinations;
-        //  if (matchingCombinations.size() <5) {
-//            System.out.println(matchingCombinations);
-//        }
+        var nbSolutions = findSubsets(calculationMatrix, transactionList, sum);
+        return nbSolutions;
     }
 
     static boolean hasMatch(List<Integer> transactionList, Integer sum) {
@@ -148,8 +149,11 @@ public class DynamicWay {
         var hasMatch = hasMatch(transactionList, sum);
         var end1 =  Instant.now();
         var hasMatchDuration = Duration.between(start, end1).toSeconds();
-        var matches = findSubsets(transactionList, sum);
-        return new ResultModel("dynamic", transactionList.size(), sum, hasMatch, hasMatchDuration, matches.size(), Duration.between(end1, Instant.now()).toSeconds());
+        var nbSolutions = 0;
+        if (hasMatch) {
+            nbSolutions = findSubsets(transactionList, sum);
+        }
+        return new ResultModel("dynamic", transactionList.size(), sum, hasMatch, hasMatchDuration, nbSolutions, Duration.between(end1, Instant.now()).toSeconds());
     }
 
 }

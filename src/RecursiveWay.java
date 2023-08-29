@@ -49,9 +49,9 @@ public class RecursiveWay {
         var combination = new ArrayList<Integer>();
         var matchingCombinations = new ArrayList<List<Integer>>();
         isThereSubsetSum(transactionList, transactionList.size(), sum, false, combination, matchingCombinations);
-        //        if (matchingCombinations.size() <5) {
-//            System.out.println(matchingCombinations.toString());
-//        }
+        //if (matchingCombinations.size() <5) {
+        //    System.out.println(matchingCombinations.toString());
+        //}
         return matchingCombinations;
     }
 
@@ -59,7 +59,6 @@ public class RecursiveWay {
         var combination = new ArrayList<Integer>();
         var matchingCombinations = new ArrayList<List<Integer>>();
         return isThereSubsetSum(transactionList, transactionList.size(), sum, true, combination, matchingCombinations);
-        //System.out.println("Recursive Way\n Has match: " + matchFound + "\n Duration (sec): " + Duration.between(start, Instant.now()).toSeconds());
     }
 
     static ResultModel getTestResult(List<Integer> transactionList, Integer sum) {

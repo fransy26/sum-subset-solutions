@@ -22,9 +22,9 @@ public class Main {
     private static Map<Integer, List<Integer>> TEST_VALUES = Map.ofEntries(
         entry(9, VALUES_LIST_1),
         entry(6, List.of(3, 2, 7, 1)),
-        entry(3000, VALUES_LIST_30),
-        entry(6000, VALUES_LIST_50),
-        entry(10000, VALUES_LIST_100)
+        entry(3000, VALUES_LIST_30)
+        //entry(5000, VALUES_LIST_50)
+        //entry(10000, VALUES_LIST_100)
     );
 
     private static final String CSV_SEPARATOR = ",";
@@ -69,6 +69,8 @@ public class Main {
             var sum =entry.getKey();
             var transactionList = entry.getValue();
 
+            System.out.println("Running test for sum " + sum + " nb transactions:" + transactionList.size());
+
             resultList.add(RecursiveWay.getTestResult(transactionList, sum));
             resultList.add(DynamicWay.getTestResult(transactionList, sum));
             //resultList.add(RecursiveWayWithMemory.get(transactionList, sum));
@@ -76,5 +78,6 @@ public class Main {
         System.out.println(LogUtils.getMaxMemory() + "Mb for max memory");
         System.out.println(LogUtils.getHeapMemory() + "Mb for heap memory");
         writeToCSV(resultList);
+        System.out.println("\nCheck results in the results.csv file");
     }
 }

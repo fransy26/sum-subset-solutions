@@ -26,7 +26,6 @@ public class RecursiveWayWithMemory {
         }
 
         // construct a unique map key from dynamic elements of the input
-
         Collections.sort(combination);
 
         String key = sum + "|" + arraySize + combination.stream()
@@ -71,7 +70,6 @@ public class RecursiveWayWithMemory {
     }
 
     static List<List<Integer>> findSubsets(List<Integer> transactionList, Integer sum) {
-        var start = Instant.now();
         var combination = new ArrayList<Integer>();
         var matchingCombinations = new ArrayList<List<Integer>>();
         // create a map to store solutions to subproblems
@@ -91,6 +89,15 @@ public class RecursiveWayWithMemory {
         Map<String, Boolean> stateCalcLookup = new HashMap<>();
         return isThereSubsetSum(transactionList, transactionList.size(), sum, true, combination, matchingCombinations, stateCalcLookup);
         //System.out.println("Recursive Way\n Has match: " + matchFound + "\n Duration (sec): " + Duration.between(start, Instant.now()).toSeconds());
+    }
+
+    static ResultModel getTestResult(List<Integer> transactionList, Integer sum) {
+        var start = Instant.now();
+        var hasMatch = hasMatch(transactionList, sum);
+        var end1 =  Instant.now();
+        var hasMatchDuration = Duration.between(start, end1).toMillis();
+        var matches = findSubsets(transactionList, sum);
+        return new ResultModel("recursive wit memo", transactionList.size(), sum, hasMatch, hasMatchDuration, matches.size(), Duration.between(end1, Instant.now()).toMillis());
     }
 
 }

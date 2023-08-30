@@ -97,9 +97,9 @@ public class DynamicWay {
             if (pathToSumModel.array_index == 0 || pathToSumModel.targetSum == 0) {
                 // path has been resolved
                 countMatch +=1;
-                if (countMatch<5) {
-                    // to avoid going out of memory only keeping the first 5 solutions for now
-                    pathToFinalSumModelListSolved.add(pathToSumModel);
+                pathToFinalSumModelListSolved.add(pathToSumModel);
+                if (countMatch >= Main.NB_SOLUTIONS_MAX) {
+                    break;
                 }
             } else {
                 boolean exclude_element = calculationMatrix[pathToSumModel.array_index - 1][pathToSumModel.targetSum];
@@ -123,6 +123,7 @@ public class DynamicWay {
                 }
             }
         }
+        //System.out.println(pathToFinalSumModelListSolved.get(0).elementsForSum);
         //return pathToFinalSumModelListSolved.stream().map(path -> path.elementsForSum).toList();
         return countMatch;
     }
@@ -135,8 +136,7 @@ public class DynamicWay {
 
     static int findSubsets(List<Integer> transactionList, Integer sum) {
         var calculationMatrix = subsetSum(transactionList, sum);
-        var nbSolutions = findSubsets(calculationMatrix, transactionList, sum);
-        return nbSolutions;
+        return findSubsets(calculationMatrix, transactionList, sum);
     }
 
     static boolean hasMatch(List<Integer> transactionList, Integer sum) {
@@ -148,12 +148,12 @@ public class DynamicWay {
         var start = Instant.now();
         var hasMatch = hasMatch(transactionList, sum);
         var end1 =  Instant.now();
-        var hasMatchDuration = Duration.between(start, end1).toSeconds();
+        var hasMatchDuration = Duration.between(start, end1).toMillis();
         var nbSolutions = 0;
         if (hasMatch) {
             nbSolutions = findSubsets(transactionList, sum);
         }
-        return new ResultModel("dynamic", transactionList.size(), sum, hasMatch, hasMatchDuration, nbSolutions, Duration.between(end1, Instant.now()).toSeconds());
+        return new ResultModel("dynamic", transactionList.size(), sum, hasMatch, hasMatchDuration, nbSolutions, Duration.between(end1, Instant.now()).toMillis());
     }
 
 }

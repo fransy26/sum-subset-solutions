@@ -65,9 +65,9 @@ public class RecursiveWay {
         var start = Instant.now();
         var hasMatch = hasMatch(transactionList, sum);
         var end1 =  Instant.now();
-        var hasMatchDuration = Duration.between(start, end1).toSeconds();
+        var hasMatchDuration = Duration.between(start, end1).toMillis();
         var matches = findSubsets(transactionList, sum);
-        return new ResultModel("recursive", transactionList.size(), sum, hasMatch, hasMatchDuration, matches.size(), Duration.between(end1, Instant.now()).toSeconds());
+        return new ResultModel("recursive", transactionList.size(), sum, hasMatch, hasMatchDuration, matches.size(), Duration.between(end1, Instant.now()).toMillis());
     }
 
 }
